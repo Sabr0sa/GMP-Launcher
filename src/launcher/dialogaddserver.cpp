@@ -13,9 +13,9 @@ DialogAddServer::DialogAddServer(QWidget *parent) :
 
 	connect(m_pUi->editUrl, &QLineEdit::textChanged, [this]() {
         QLineEdit* addressLine = this->m_pUi->editUrl;
-        const QUrl url = QUrl::fromUserInput(addressLine->text());
+        QUrl url; url.setAuthority(addressLine->text());
         // Only allow URLs with <hostname>:<port> format.
-        if (!url.isValid() || url.hasFragment() || url.hasQuery() || url.isLocalFile() || url.port() == -1 || url.port() == 0) {
+        if (!url.isValid() || url.port(0) == 0) {
             this->m_pUi->buttonAddServer->setEnabled(false);
             addressLine->setStyleSheet(invalidStyle);
         } else {
@@ -29,7 +29,7 @@ DialogAddServer::DialogAddServer(QWidget *parent) :
 	connect(m_pUi->buttonAddServer, &QPushButton::clicked, [this]() {
 		QLineEdit* serverNameLine = this->m_pUi->editServerName;
 		QLineEdit* addressLine = this->m_pUi->editUrl;
-        const QUrl url = QUrl::fromUserInput(addressLine->text());
+        QUrl url; url.setAuthority(addressLine->text());
 
         emit selected(serverNameLine->text(), url.host(), url.port());
 
