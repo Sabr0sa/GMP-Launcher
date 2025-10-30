@@ -2,9 +2,9 @@
 #include <string>
 
 struct ProgramArgs {
-    std::wstring gothic{L"Gothic2.exe"};
+    std::wstring gothic{L"System\\Gothic2.exe"};
     std::wstring dll{L"gmp\\gmp.dll"};
-    std::wstring host{L"localhost:28960"};
+    std::wstring host{L"localhost|28960"};
     std::wstring nickname;
     std::wstring debugLevel{L"-1"};
     bool enableGothicException{false};
