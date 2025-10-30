@@ -9,7 +9,7 @@ set(SLIKENET_ENABLE_DLL OFF CACHE INTERNAL "")
 include(FetchContent)
 FetchContent_Declare(slikenet
         GIT_REPOSITORY https://gitlab.com/Sabrosa/slikenet.git
-        GIT_TAG        0621404add46ac03decb1b46fed8fd79e982abbc
+        GIT_TAG        922482ad604839db15fbd9a5f08fe5fe6b545405
 )
 FetchContent_MakeAvailable(slikenet)
 
