@@ -122,9 +122,10 @@ void MainWindow::startProcess()
     const QFileInfo gmpDllPath(s.value("gmp_dll", "gmp/gmp.dll").toString());
 
     const int row = index.front().row();
-    const QString host = m_pServerModel->data(m_pServerModel->index(row, Server::P_Url), Qt::DisplayRole).toString()
-            + '|'
-            + QString::number(m_pServerModel->data(m_pServerModel->index(row, Server::P_Port), Qt::DisplayRole).toUInt());
+    QString host = m_pServerModel->data(m_pServerModel->index(row, Server::P_Url), Qt::DisplayRole).toString();
+    if (host.contains(':')) // IPv6 address
+        host.prepend('[').append(']');
+    host += ':' + QString::number(m_pServerModel->data(m_pServerModel->index(row, Server::P_Port), Qt::DisplayRole).toUInt());
     const QString nick = m_pServerModel->data(m_pServerModel->index(row, Server::P_Nick), Qt::DisplayRole).toString();
 
 #ifdef _WIN32
