@@ -1,13 +1,14 @@
 #pragma once
-#include "Windows.h"
+#include <windows.h>
 #include <memory>
 #include <string>
+#include <string_view>
 
 inline bool isSlash(const wchar_t c) {
     return c == L'\\' || c == L'/';
 }
 
-inline std::wstring parentPath(const std::wstring &path) {
+inline std::wstring parentPath(const std::wstring_view path) {
     const wchar_t *const first = path.data();
     const wchar_t *last = first + path.size();
     // Remove everything until the first slash
@@ -22,23 +23,31 @@ inline std::wstring parentPath(const std::wstring &path) {
     return {first, last};
 }
 
-inline std::wstring absolutePath(const std::wstring &path) {
+inline std::wstring absolutePath(const std::wstring& path) {
     const DWORD size = GetFullPathNameW(path.c_str(), 0, nullptr, nullptr);
-    std::wstring absolutePath;
-    absolutePath.resize(size);
+    std::wstring absolutePath(size, '\0');
     GetFullPathNameW(path.c_str(), size, absolutePath.data(), nullptr);
     return absolutePath;
 }
 
-inline bool fileExists(const std::wstring &path) {
+inline bool fileExists(const std::wstring& path) {
     DWORD result = GetFileAttributesW(path.c_str());
     return result != INVALID_FILE_ATTRIBUTES && (result & FILE_ATTRIBUTE_DIRECTORY) == 0U;
 }
 
-inline bool isProcessRunning(const std::wstring &process) {
-    using unique_handle = std::unique_ptr<std::remove_pointer_t<HANDLE>, decltype(&CloseHandle)>;
+inline bool isProcessRunning(const std::wstring_view process) {
+    struct handle_deleter
+    {
+        using pointer = HANDLE;
 
-    const unique_handle snapshot(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0), CloseHandle);
+        void operator()(pointer handle)
+        {
+            CloseHandle(handle);
+        }
+    };
+    using unique_handle = std::unique_ptr<HANDLE, handle_deleter>;
+
+    const unique_handle snapshot(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0));
     if (snapshot.get() == INVALID_HANDLE_VALUE) {
         fprintf(stderr, "Couldn't create Toolhelp32Snapshot. GetLastError: %lu", GetLastError());
         return false;

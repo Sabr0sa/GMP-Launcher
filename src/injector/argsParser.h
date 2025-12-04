@@ -2,7 +2,7 @@
 #include <string>
 
 struct ProgramArgs {
-    std::wstring gothic{L"Gothic2.exe"};
+    std::wstring gothic{L"System\\Gothic2.exe"};
     std::wstring dll{L"gmp\\gmp.dll"};
     std::wstring host{L"localhost:28960"};
     std::wstring nickname;
@@ -35,9 +35,13 @@ inline ProgramArgs parseProgramArgs(int argc, wchar_t *argv[]) {
         } else if (arg.find(exceptionArg) != std::wstring_view::npos) {
             programArgs.enableGothicException = true;
         } else if (arg.find(helpArg) != std::wstring_view::npos) {
-            printf(
-                "usage: gmpinjector [%ls] [%ls<path>] [%ls<path>] [%ls<host:port>] [%ls<name>] [%ls<number>] [%ls]\n",
-                helpArg, gothicArg, dllArg, hostArg, nicknameArg, debugLevelArg, exceptionArg);
+            puts("Usage: gmpinjector [options]\nOptions:");
+            printf("  %ls\tPath to the Gothic executable. Defaults to %ls\n", gothicArg, programArgs.gothic.c_str());
+            printf("  %ls\tPath to the GMP client DLL. Defaults to %ls\n", dllArg, programArgs.dll.c_str());
+            printf("  %ls\tHost and port of the server to connect to, seperated by ':'. Defaults to %ls\n", hostArg, programArgs.host.c_str());
+            printf("  %ls\tNickname to use on the server. By default, the server will generate a nickname for you\n", nicknameArg);
+            printf("  %ls<0-9>\tDebug level of the zSpy. By default, logging is deactivated (-1). If activated, will start the zSpy in the Gothic directory\n", debugLevelArg);
+            printf("  %ls\tWhether to use the Gothic exception handler. Defaults to %s\n", exceptionArg, (programArgs.enableGothicException ? "true" : "false"));
             std::exit(EXIT_SUCCESS);
         }
     }

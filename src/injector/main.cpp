@@ -1,5 +1,5 @@
-#include "Windows.h"
-#include "tlhelp32.h"
+#include <windows.h>
+#include <tlhelp32.h>
 #include "win32Utils.h"
 #include "argsParser.h"
 #include "zSpy.h"
@@ -7,13 +7,13 @@
 
 int inject(const ProgramArgs &programArgs) {
     if (!fileExists(programArgs.gothic)) {
-        fprintf(stderr, "Gothic EXE not found in path \"%ls\"\n", programArgs.gothic.c_str());
+        fprintf(stderr, "Gothic EXE not found in path \"%ls\". Please specify the path with --gothic=\n", programArgs.gothic.c_str());
         return EXIT_FAILURE;
     }
 
     const std::wstring dllAbsolutePath = absolutePath(programArgs.dll);
     if (!fileExists(dllAbsolutePath)) {
-        fprintf(stderr, "GMP DLL not found in path \"%ls\"\n", dllAbsolutePath.c_str());
+        fprintf(stderr, "GMP DLL not found in path \"%ls\". Please specify the path with --dll=\n", programArgs.dll.c_str());
         return EXIT_FAILURE;
     }
 

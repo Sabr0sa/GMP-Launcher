@@ -48,17 +48,19 @@ void GMPClient::start(const QString &address, quint16 port)
     (void)QtConcurrent::run(QThreadPool::globalInstance(), [this, address, port]{
         constexpr char password[] = "b5r6kQ6gp0GcpK4x";
 
-        SLNet::ConnectionAttemptResult result;
-        for (unsigned int socket = 0; socket < 2; socket++) {
-            result = m_pClient->Connect(address.toStdString().c_str(), port, password, sizeof(password) - 1, nullptr, socket);
-            if (result == SLNet::CONNECTION_ATTEMPT_STARTED) {
-                emit startTimer();
-                return;
-            }
+        // resolve domain to IP
+        SLNet::SystemAddress ip(address.toStdString().c_str(), port);
+        int socket = 0;
+        if (ip.GetIPVersion() == 6)
+            socket = 1;
+        SLNet::ConnectionAttemptResult result = m_pClient->Connect(ip.ToString(false), ip.GetPort(), password, sizeof(password) - 1, nullptr, socket);
+        if (result == SLNet::CONNECTION_ATTEMPT_STARTED) {
+            emit startTimer();
+            return;
         }
 
         ServerInfo info;
-        switch(result){
+        switch(result) {
             case SLNet::INVALID_PARAMETER:
                 info.serverName = "Invalid Parameter";
                 break;
